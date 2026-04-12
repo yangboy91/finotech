@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinoTech BA/DA Internship Hub
 
-## Getting Started
+Production-ready internal internship portal built with Next.js 15, TypeScript, Tailwind, shadcn/ui, and Supabase.
 
-First, run the development server:
+## Features
+
+- Student and admin roles
+- Student dashboard
+- 8-week curriculum pages
+- Weekly submissions with link or file upload
+- Feedback system
+- Admin pages for weeks, resources, submissions, and feedback
+- Seeded internship curriculum
+- Supabase auth, database, and storage integration
+- Demo fallback mode when Supabase is not configured locally
+
+## Folder structure
+
+```txt
+src/
+  app/
+    (auth)/login
+    (portal)/dashboard
+    (portal)/weeks
+    (portal)/weeks/[weekId]
+    (portal)/submissions
+    (portal)/resources
+    (portal)/feedback
+    (admin)/admin
+    (admin)/admin/weeks
+    (admin)/admin/resources
+    (admin)/admin/submissions
+    (admin)/admin/feedback
+    actions/
+  components/
+    forms/
+    ui/
+  lib/
+    auth.ts
+    constants.ts
+    data.ts
+    demo-store.ts
+    env.ts
+    format.ts
+    supabase/
+supabase/
+  migrations/
+scripts/
+  seed-supabase.mjs
+```
+
+## Database tables
+
+- `profiles`
+- `weeks`
+- `week_knowledge_items`
+- `week_tasks`
+- `week_deliverables`
+- `resources`
+- `week_resources`
+- `submissions`
+- `feedback`
+- `session_notes`
+
+## Setup
+
+1. Install dependencies.
+
+```bash
+npm install
+```
+
+2. Create a Supabase project.
+
+3. Copy `.env.example` to `.env.local` and fill in:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+4. Run the SQL migration in [`supabase/migrations/20260411170000_finotech_portal.sql`](/Users/stevenyang/trading-frontend/FinoTech/supabase/migrations/20260411170000_finotech_portal.sql).
+
+5. Seed the database and sample accounts:
+
+```bash
+npm run seed:supabase
+```
+
+6. Start the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Sample accounts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Admin: `admin@finotech.xyz` / `FinotechAdmin123!`
+- Student: `student@finotech.xyz` / `FinotechStudent123!`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Demo mode
 
-## Learn More
+If Supabase env vars are missing, the app runs in a local demo mode backed by a JSON store in `/tmp`. This makes the UI previewable before infrastructure is configured. The same sample admin/student emails work in demo mode, and password is optional there.
 
-To learn more about Next.js, take a look at the following resources:
+## Verification checklist
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Login with the student and admin accounts
+- Confirm all 8 weeks render on `/weeks`
+- Submit a link or file from `/submissions`
+- Review submission status on `/admin/submissions`
+- Leave feedback on `/admin/feedback`
+- Confirm student feedback appears on `/feedback`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Uploads use the `submission-files` Supabase Storage bucket.
+- RLS policies enforce student/admin access.
+- Maintainability is prioritized over highly abstracted patterns.
