@@ -21,15 +21,21 @@ export function LoginForm() {
           Sign in
         </CardTitle>
         <CardDescription className="leading-6">
-          Use your internal internship portal account. In demo mode, you can sign in with
-          `admin@finotech.xyz` or `student@finotech.xyz`.
+          {isSupabaseConfigured
+            ? "Use your internal internship portal account to access the internship hub."
+            : "Use your internal internship portal account. In demo mode, you can sign in with `admin@finotech.xyz` or `student@finotech.xyz`."}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="student@finotech.xyz" />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder={isSupabaseConfigured ? "name@finotech.xyz" : "student@finotech.xyz"}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>

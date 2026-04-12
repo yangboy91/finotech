@@ -278,20 +278,49 @@ async function seedCurriculum() {
 
     for (const [title, typeLabel, description, url] of week.resources) {
       const resourceType = typeLabel.toLowerCase();
-      const { data: resource, error: resourceError } = await supabase
+      const { data: existingResource, error: existingResourceError } = await supabase
         .from("resources")
-        .upsert({
-          title,
-          description,
-          resource_type: resourceType,
-          url,
-        }, {
-          onConflict: "title",
-        })
-        .select()
-        .single();
+        .select("id")
+        .eq("title", title)
+        .maybeSingle();
 
-      if (resourceError) throw resourceError;
+      if (existingResourceError) throw existingResourceError;
+
+      let resource = existingResource;
+
+      if (existingResource) {
+        const { data: updatedResource, error: updateResourceError } = await supabase
+          .from("resources")
+          .update({
+            description,
+            resource_type: resourceType,
+            url,
+          })
+          .eq("id", existingResource.id)
+          .select()
+          .single();
+
+        if (updateResourceError) throw updateResourceError;
+        resource = updatedResource;
+      } else {
+        const { data: insertedResource, error: insertResourceError } = await supabase
+          .from("resources")
+          .insert({
+            title,
+            description,
+            resource_type: resourceType,
+            url,
+          })
+          .select()
+          .single();
+
+        if (insertResourceError) throw insertResourceError;
+        resource = insertedResource;
+      }
+
+      if (!resource) {
+        throw new Error(`Unable to create or update resource ${title}`);
+      }
 
       const { error: weekResourceError } = await supabase
         .from("week_resources")
