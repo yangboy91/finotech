@@ -1,20 +1,76 @@
 # FinoTech BA/DA Internship Hub
 
-Production-ready internal internship portal built with Next.js 15, TypeScript, Tailwind, shadcn/ui, and Supabase.
+Internal internship portal for the FinoTech BA/DA program, built with Next.js 15, TypeScript, Tailwind, shadcn/ui, and Supabase.
 
-## Features
+## Overview
+
+This project is a desktop-first but responsive internal operations portal for running an 8-week business analysis and data analytics internship program.
+
+It includes:
 
 - Student and admin roles
-- Student dashboard
+- Student dashboard and progress tracking
 - 8-week curriculum pages
 - Weekly submissions with link or file upload
-- Feedback system
-- Admin pages for weeks, resources, submissions, and feedback
-- Seeded internship curriculum
-- Supabase auth, database, and storage integration
-- Demo fallback mode when Supabase is not configured locally
+- Structured mentor feedback
+- Admin tooling for weeks, resources, submissions, and notes
+- Supabase auth, database, storage, and RLS policies
+- Seed data for the full 8-week internship flow
 
-## Folder structure
+## Product structure
+
+- Dashboard
+- Weeks list
+- Week detail page
+- Submissions page
+- Resources page
+- Feedback page
+- Admin pages
+
+## Tech stack
+
+- Next.js 15
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Supabase Auth
+- Supabase Postgres
+- Supabase Storage
+
+## Key features
+
+### Student experience
+
+- View all 8 internship weeks
+- Read weekly objectives, knowledge items, tasks, and deliverables
+- Submit work by file upload or external link
+- Review mentor feedback and submission status
+- Access a shared resource library
+
+### Admin experience
+
+- Manage week summaries and publish state
+- Add and organize learning resources
+- Review and update submission statuses
+- Leave student-visible feedback
+- Save internal-only session notes
+
+### Data model
+
+The app uses the following tables:
+
+- `profiles`
+- `weeks`
+- `week_knowledge_items`
+- `week_tasks`
+- `week_deliverables`
+- `resources`
+- `week_resources`
+- `submissions`
+- `feedback`
+- `session_notes`
+
+## Repository structure
 
 ```txt
 src/
@@ -43,26 +99,13 @@ src/
     env.ts
     format.ts
     supabase/
-supabase/
-  migrations/
 scripts/
   seed-supabase.mjs
+supabase/
+  migrations/
 ```
 
-## Database tables
-
-- `profiles`
-- `weeks`
-- `week_knowledge_items`
-- `week_tasks`
-- `week_deliverables`
-- `resources`
-- `week_resources`
-- `submissions`
-- `feedback`
-- `session_notes`
-
-## Setup
+## Local setup
 
 1. Install dependencies.
 
@@ -70,9 +113,13 @@ scripts/
 npm install
 ```
 
-2. Create a Supabase project.
+2. Copy `.env.example` to `.env.local`.
 
-3. Copy `.env.example` to `.env.local` and fill in:
+```bash
+cp .env.example .env.local
+```
+
+3. Fill in the required Supabase environment variables.
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=
@@ -80,15 +127,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ```
 
-4. Run the SQL migration in [`supabase/migrations/20260411170000_finotech_portal.sql`](/Users/stevenyang/trading-frontend/FinoTech/supabase/migrations/20260411170000_finotech_portal.sql).
+4. Run the SQL migration in [supabase/migrations/20260411170000_finotech_portal.sql](/Users/stevenyang/trading-frontend/FinoTech/supabase/migrations/20260411170000_finotech_portal.sql).
 
-5. Seed the database and sample accounts:
+5. Seed the project.
 
 ```bash
 npm run seed:supabase
 ```
 
-6. Start the app:
+6. Start the app.
 
 ```bash
 npm run dev
@@ -101,19 +148,24 @@ npm run dev
 
 ## Demo mode
 
-If Supabase env vars are missing, the app runs in a local demo mode backed by a JSON store in `/tmp`. This makes the UI previewable before infrastructure is configured. The same sample admin/student emails work in demo mode, and password is optional there.
+If Supabase is not configured yet, the app falls back to a local demo mode backed by `/tmp/finotech-demo-store.json`.
 
-## Verification checklist
+This makes it possible to preview the complete portal flow before wiring up infrastructure.
 
-- Login with the student and admin accounts
-- Confirm all 8 weeks render on `/weeks`
-- Submit a link or file from `/submissions`
-- Review submission status on `/admin/submissions`
-- Leave feedback on `/admin/feedback`
-- Confirm student feedback appears on `/feedback`
+## Verification
+
+- `npm run lint`
+- `npm run build`
+
+Validated flows in local/demo mode:
+
+- Protected routes redirect unauthenticated users to `/login`
+- Seeded internship weeks render correctly
+- Student submissions render and can be updated in demo mode
+- Admin feedback pages render with seeded review data
 
 ## Notes
 
-- Uploads use the `submission-files` Supabase Storage bucket.
-- RLS policies enforce student/admin access.
-- Maintainability is prioritized over highly abstracted patterns.
+- File uploads use the `submission-files` Supabase Storage bucket
+- RLS policies enforce student/admin access rules
+- The implementation prioritizes maintainability and reusable components over unnecessary abstraction
