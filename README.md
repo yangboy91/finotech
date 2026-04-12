@@ -146,6 +146,15 @@ npm run dev
 - Admin: `admin@finotech.xyz` / `FinotechAdmin123!`
 - Student: `student@finotech.xyz` / `FinotechStudent123!`
 
+## Production deployment
+
+- Portal URL: [hub.finotech.xyz](https://hub.finotech.xyz)
+- Frontend hosting: Vercel
+- Primary marketing site: `finotech.xyz` remains on Cloudflare
+- Database and auth: Supabase
+
+Production is configured with real Supabase environment variables, seeded internship data, role-based auth, and the `submission-files` private storage bucket.
+
 ## Demo mode
 
 If Supabase is not configured yet, the app falls back to a local demo mode backed by `/tmp/finotech-demo-store.json`.
@@ -156,6 +165,15 @@ This makes it possible to preview the complete portal flow before wiring up infr
 
 - `npm run lint`
 - `npm run build`
+
+Validated in production on April 12, 2026:
+
+- `https://hub.finotech.xyz/login` returns `200`
+- Unauthenticated access to `/dashboard`, `/admin`, and `/weeks` redirects to `/login`
+- Supabase auth works for both seeded sample accounts
+- All 8 internship weeks are present in the production database
+- A student submission can be created successfully
+- An admin feedback item can be created and read back successfully
 
 Validated flows in local/demo mode:
 
